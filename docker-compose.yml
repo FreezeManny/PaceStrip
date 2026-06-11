@@ -1,0 +1,23 @@
+services:
+  build:
+    build: .
+    volumes:
+      - .:/app
+      # Cache Gradle and Flutter pub between runs
+      - gradle-cache:/root/.gradle
+      - pub-cache:/root/.pub-cache
+    command: flutter build apk --debug
+
+  shell:
+    build: .
+    volumes:
+      - .:/app
+      - gradle-cache:/root/.gradle
+      - pub-cache:/root/.pub-cache
+    stdin_open: true
+    tty: true
+    command: bash
+
+volumes:
+  gradle-cache:
+  pub-cache:
