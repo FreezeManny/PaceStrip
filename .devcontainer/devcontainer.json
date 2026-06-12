@@ -1,7 +1,9 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
   "name": "Flutter",
-  "image": "ghcr.io/thephaseless/devcontainers/flutter:latest",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "features": {
     "ghcr.io/devcontainers/features/sshd:1": {},
     "ghcr.io/postfinance/devcontainer-features/git-lfs:1": {},
