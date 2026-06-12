@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/devcontainers/base:bookworm
 
 # Single version knob: the Android SDK/NDK versions are derived from the
 # Flutter SDK below. Bump this, rebuild, done.
-ARG FLUTTER_VERSION=3.44.1
+ARG FLUTTER_VERSION=3.44.2
 # https://developer.android.com/studio#command-line-tools-only (any recent build works)
 ARG CMDLINE_TOOLS_BUILD=13114758
 
@@ -61,6 +61,7 @@ RUN chown -R vscode:vscode $FLUTTER_HOME $ANDROID_HOME
 
 USER vscode
 RUN flutter config --no-analytics \
+    && flutter config --no-enable-linux-desktop \
     && flutter precache --android \
     && yes | flutter doctor --android-licenses > /dev/null 2>&1 || true
 USER root

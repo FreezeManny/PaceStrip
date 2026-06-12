@@ -15,7 +15,8 @@
     "-v", "/dev/bus/usb:/dev/bus/usb"
   ],
   "mounts": [
-    "source=claude-config,target=/home/vscode/.claude,type=volume"
+    "source=claude-config,target=/home/vscode/.claude,type=volume",
+    "source=pacestrip-pub-cache,target=/home/vscode/.pub-cache,type=volume"
   ],
-  "postCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.claude"
+  "postCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.claude /home/vscode/.pub-cache"
 }

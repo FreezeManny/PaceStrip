@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 import 'models/zone_config.dart';
 import 'providers/settings_provider.dart';
 import 'providers/stats_provider.dart';
@@ -12,7 +11,6 @@ void main() async {
   final settingsService = SettingsService();
   final initialConfig = await settingsService.load();
   final initialThemeMode = await settingsService.loadThemeMode();
-  WakelockPlus.enable();
 
   runApp(CycleApp(
     settingsService: settingsService,
