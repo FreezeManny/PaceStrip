@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'models/zone_config.dart';
 import 'providers/settings_provider.dart';
 import 'providers/stats_provider.dart';
+import 'services/ble/ble_constants.dart';
+import 'services/ble/ble_sensor_manager.dart';
 import 'services/settings_service.dart';
 import 'widgets/dashboard.dart';
 
@@ -40,9 +42,22 @@ class CycleApp extends StatelessWidget {
             ..updateConfig(initialConfig)
             ..setThemeMode(initialThemeMode),
         ),
+        ChangeNotifierProvider(
+          create: (_) {
+            final manager = BleSensorManager(settingsService);
+            // Reconnect to any sensors remembered from a previous session.
+            for (final role in SensorRole.values) {
+              manager.reconnectRemembered(role);
+            }
+            return manager;
+          },
+          lazy: false,
+        ),
         ChangeNotifierProxyProvider<SettingsProvider, StatsProvider>(
-          create: (ctx) =>
-              StatsProvider(ctx.read<SettingsProvider>().config),
+          create: (ctx) => StatsProvider(
+            ctx.read<SettingsProvider>().config,
+            ble: ctx.read<BleSensorManager>(),
+          ),
           update: (_, settings, stats) =>
               stats!..updateSettings(settings.config),
         ),

@@ -20,43 +20,44 @@ the app is squeezed into a thin strip alongside a map, video, or training app.
 - **Persistent settings** — your zone configuration and theme are saved locally
   via `shared_preferences`.
 
-## Status
+## Bluetooth sensors
 
-> ⚠️ **Sensor data is currently simulated.** The app ships with a built-in
-> `SensorService` that generates realistic heart-rate and cadence values so the
-> UI can be developed and demoed without hardware. See
-> [Roadmap → Bluetooth](#roadmap) for the planned move to real sensors.
-
-## Roadmap
-
-### Bluetooth sensor support (planned)
-
-PaceStrip is designed to connect to real fitness sensors over **Bluetooth Low
-Energy (BLE)**. The plan is to support the standard GATT profiles so most
-off-the-shelf devices work out of the box:
+PaceStrip connects to real fitness sensors over **Bluetooth Low Energy (BLE)**
+using standard GATT profiles, so most off-the-shelf devices (Coospo, Garmin,
+Polar, Wahoo, …) work out of the box:
 
 - **Heart Rate Monitors** — Heart Rate Service (`0x180D`), e.g. chest straps and
   optical HR armbands.
-- **Cadence sensors** — Cycling Speed and Cadence Service (`0x1816`), and
-  cadence data from Cycling Power Service (`0x1818`) where available.
+- **Cadence sensors** — Cycling Speed and Cadence Service (`0x1816`), plus
+  cadence from crank-equipped power meters via Cycling Power Service (`0x1818`).
+  Speed-only sensors are ignored.
 
-Planned BLE-related work:
+How it works:
 
-- Device scanning, pairing, and reconnection handling.
-- Live decoding of HR and cadence notifications into the existing
-  `CyclingStats` stream.
-- Graceful fallback to the simulated sensor when no device is connected.
-- A device-management screen for selecting and remembering sensors.
+- Open **Settings → SENSORS** and connect a sensor for each role. The scan is
+  filtered by service type, so each role only lists matching devices — you just
+  pick yours once. BLE sensors are connected directly by the app (they are *not*
+  paired in Android's Bluetooth settings).
+- Chosen sensors are remembered and **auto-reconnect** on launch / when they
+  come back in range.
+- Each metric **falls back to a built-in simulator** when its sensor is not
+  connected, so the UI always shows data for development and demos. Cadence
+  decays to 0 when you stop pedalling.
 
-The current architecture already isolates data acquisition behind
-`SensorService` (`lib/services/sensor_service.dart`), so adding a BLE-backed
-implementation means swapping the data source without touching the UI.
+Data acquisition is isolated behind `SensorHub`
+(`lib/services/sensor_service.dart`), which merges the live BLE streams
+(`lib/services/ble/`) and the simulator into the single `CyclingStats` stream
+the UI consumes.
 
-### Other ideas
+## Roadmap
+
+- Additional metrics (power, speed, elapsed time).
 
 - Additional metrics (power, speed, elapsed time).
 - Configurable card layout.
 - Session recording / export.
+
+> ℹ️ BLE requires a physical Android device — sensors do not work on emulators.
 
 ## Getting started
 

@@ -35,4 +35,28 @@ class SettingsService {
     await prefs.setString(
         _themeKey, mode == ThemeMode.light ? 'light' : 'dark');
   }
+
+  /// Remembers the BLE sensor chosen for a role, stored as `{id, name}` JSON
+  /// under [key] (see `SensorRoleX.prefsKey`).
+  Future<void> saveSensorDevice(String key, String id, String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, jsonEncode({'id': id, 'name': name}));
+  }
+
+  Future<({String id, String name})?> loadSensorDevice(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(key);
+    if (raw == null) return null;
+    try {
+      final map = jsonDecode(raw) as Map<String, dynamic>;
+      return (id: map['id'] as String, name: map['name'] as String);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> clearSensorDevice(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(key);
+  }
 }

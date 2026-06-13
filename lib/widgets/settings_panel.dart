@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/settings_provider.dart';
+import 'sensor_section.dart';
 import 'zone_slider.dart';
 import 'cadence_slider.dart';
 
@@ -34,6 +35,10 @@ class SettingsPanel extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            _sectionLabel(context, 'SENSORS'),
+            const SizedBox(height: 4),
+            const SensorSection(),
+            const SizedBox(height: 16),
             _sectionLabel(context, 'THEME'),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
