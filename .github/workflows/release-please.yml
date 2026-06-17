@@ -1,0 +1,23 @@
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+name: Release Please
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          # A PAT (repo + workflow scopes) stored as the ACTIONS_TOKEN secret lets
+          # the release PR / tag trigger other workflows (e.g. a publish job).
+          # The built-in secrets.GITHUB_TOKEN also works, but tags it creates
+          # will NOT trigger downstream workflows. Swap if you don't need that.
+          token: ${{ secrets.ACTIONS_TOKEN }}
