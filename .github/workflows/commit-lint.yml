@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: webiny/action-conventional-commits@v1.3.0
+      - uses: webiny/action-conventional-commits@v1.4.2
         with:
           # Keep this list in sync with the `args:` in .pre-commit-config.yaml.
           allowed-commit-types: "build,chore,ci,docs,feat,fix,perf,refactor,revert,style,test,wip"
