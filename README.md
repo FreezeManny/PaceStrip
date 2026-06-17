@@ -51,10 +51,6 @@ the UI consumes.
 
 ## Roadmap
 
-- Additional metrics (power, speed, elapsed time).
-
-- Additional metrics (power, speed, elapsed time).
-- Configurable card layout.
 - Session recording / export.
 
 > ℹ️ BLE requires a physical Android device — sensors do not work on emulators.
