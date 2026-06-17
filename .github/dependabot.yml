@@ -6,7 +6,15 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    # Use Conventional Commits so the Commit Lint check passes.
+    commit-message:
+      prefix: "ci"
+      include: "scope"
   - package-ecosystem: "pub"
     directory: "/"
     schedule:
       interval: weekly
+    # Use Conventional Commits so the Commit Lint check passes.
+    commit-message:
+      prefix: "build"
+      include: "scope"
