@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import '../models/app_theme.dart';
 import '../models/zone_config.dart';
 import '../services/settings_service.dart';
 
@@ -7,16 +8,16 @@ class SettingsProvider extends ChangeNotifier {
 
   final SettingsService _service;
   ZoneConfig _config = ZoneConfig.defaults();
-  ThemeMode _themeMode = ThemeMode.dark;
+  AppTheme _appTheme = AppTheme.dark;
   bool _simulateSensors = false;
 
   ZoneConfig get config => _config;
-  ThemeMode get themeMode => _themeMode;
+  AppTheme get appTheme => _appTheme;
   bool get simulateSensors => _simulateSensors;
 
   Future<void> initialize() async {
     _config = await _service.load();
-    _themeMode = await _service.loadThemeMode();
+    _appTheme = await _service.loadAppTheme();
     _simulateSensors = await _service.loadSimulateSensors();
     notifyListeners();
   }
@@ -27,10 +28,10 @@ class SettingsProvider extends ChangeNotifier {
     await _service.save(config);
   }
 
-  Future<void> setThemeMode(ThemeMode mode) async {
-    _themeMode = mode;
+  Future<void> setAppTheme(AppTheme theme) async {
+    _appTheme = theme;
     notifyListeners();
-    await _service.saveThemeMode(mode);
+    await _service.saveAppTheme(theme);
   }
 
   Future<void> setSimulateSensors(bool value) async {

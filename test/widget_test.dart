@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:pacestrip/models/app_theme.dart';
 import 'package:pacestrip/models/zone_config.dart';
 import 'package:pacestrip/providers/settings_provider.dart';
 import 'package:pacestrip/providers/stats_provider.dart';
@@ -85,18 +86,18 @@ void main() {
   });
 
   group('Theme', () {
-    testWidgets('themeMode follows the provider and persists', (tester) async {
+    testWidgets('appTheme follows the provider and persists', (tester) async {
       await _pumpApp(tester, const Size(416, 900));
 
       final ctx = tester.element(find.byType(Dashboard));
       final settings = ctx.read<SettingsProvider>();
-      expect(settings.themeMode, ThemeMode.dark);
+      expect(settings.appTheme, AppTheme.dark);
 
-      await settings.setThemeMode(ThemeMode.light);
-      expect(settings.themeMode, ThemeMode.light);
+      await settings.setAppTheme(AppTheme.black);
+      expect(settings.appTheme, AppTheme.black);
 
       final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getString('theme_mode'), 'light');
+      expect(prefs.getString('theme_mode'), 'black');
     });
   });
 }

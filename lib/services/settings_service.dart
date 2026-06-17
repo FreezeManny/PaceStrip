@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/app_theme.dart';
 import '../models/zone_config.dart';
 
 class SettingsService {
@@ -24,17 +24,18 @@ class SettingsService {
     await prefs.setString(_key, jsonEncode(config.toJson()));
   }
 
-  Future<ThemeMode> loadThemeMode() async {
+  Future<AppTheme> loadAppTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_themeKey) == 'light'
-        ? ThemeMode.light
-        : ThemeMode.dark;
+    final raw = prefs.getString(_themeKey);
+    return AppTheme.values.firstWhere(
+      (t) => t.name == raw,
+      orElse: () => AppTheme.dark,
+    );
   }
 
-  Future<void> saveThemeMode(ThemeMode mode) async {
+  Future<void> saveAppTheme(AppTheme theme) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-        _themeKey, mode == ThemeMode.light ? 'light' : 'dark');
+    await prefs.setString(_themeKey, theme.name);
   }
 
   /// Whether to simulate sensor data when no sensor is connected (debug only).
