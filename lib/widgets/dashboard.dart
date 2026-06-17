@@ -29,8 +29,10 @@ class Dashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     final stats = context.watch<StatsProvider>();
     final latest = stats.latest;
-    final zone = latest?.zone ?? 1;
-    final cadenceZone = latest?.cadenceZone ?? 1;
+    // 0 = no value: ZoneSegmentBar lights nothing and the graph falls back to
+    // a neutral color, so missing data reads as blank rather than zone 1.
+    final zone = latest?.zone ?? 0;
+    final cadenceZone = latest?.cadenceZone ?? 0;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -47,7 +49,7 @@ class Dashboard extends StatelessWidget {
                     Expanded(
                       child: MetricCard(
                         label: 'HEART RATE',
-                        value: latest?.heartRate.toString() ?? '--',
+                        value: latest?.heartRate?.toString() ?? '---',
                         unit: 'bpm',
                         zone: zone,
                         zonePalette: zoneColors,
@@ -56,7 +58,7 @@ class Dashboard extends StatelessWidget {
                     Expanded(
                       child: MetricCard(
                         label: 'CADENCE',
-                        value: latest?.cadence.toString() ?? '--',
+                        value: latest?.cadence?.toString() ?? '---',
                         unit: 'rpm',
                         zone: cadenceZone,
                         zonePalette: cadenceZoneColors,

@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'models/zone_config.dart';
 import 'providers/settings_provider.dart';
 import 'providers/stats_provider.dart';
+import 'services/ble/ble_constants.dart';
+import 'services/ble/ble_sensor_manager.dart';
 import 'services/settings_service.dart';
 import 'widgets/dashboard.dart';
 
@@ -11,11 +13,13 @@ void main() async {
   final settingsService = SettingsService();
   final initialConfig = await settingsService.load();
   final initialThemeMode = await settingsService.loadThemeMode();
+  final initialSimulate = await settingsService.loadSimulateSensors();
 
   runApp(CycleApp(
     settingsService: settingsService,
     initialConfig: initialConfig,
     initialThemeMode: initialThemeMode,
+    initialSimulate: initialSimulate,
   ));
 }
 
@@ -25,11 +29,13 @@ class CycleApp extends StatelessWidget {
     required this.settingsService,
     required this.initialConfig,
     this.initialThemeMode = ThemeMode.dark,
+    this.initialSimulate = false,
   });
 
   final SettingsService settingsService;
   final ZoneConfig initialConfig;
   final ThemeMode initialThemeMode;
+  final bool initialSimulate;
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +44,28 @@ class CycleApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => SettingsProvider(settingsService)
             ..updateConfig(initialConfig)
-            ..setThemeMode(initialThemeMode),
+            ..setThemeMode(initialThemeMode)
+            ..setSimulateSensors(initialSimulate),
+        ),
+        ChangeNotifierProvider(
+          create: (_) {
+            final manager = BleSensorManager(settingsService);
+            // Reconnect to any sensors remembered from a previous session.
+            for (final role in SensorRole.values) {
+              manager.reconnectRemembered(role);
+            }
+            return manager;
+          },
+          lazy: false,
         ),
         ChangeNotifierProxyProvider<SettingsProvider, StatsProvider>(
-          create: (ctx) =>
-              StatsProvider(ctx.read<SettingsProvider>().config),
-          update: (_, settings, stats) =>
-              stats!..updateSettings(settings.config),
+          create: (ctx) => StatsProvider(
+            ctx.read<SettingsProvider>().config,
+            ble: ctx.read<BleSensorManager>(),
+          ),
+          update: (_, settings, stats) => stats!
+            ..updateSettings(settings.config)
+            ..setSimulate(settings.simulateSensors),
         ),
       ],
       child: Consumer<SettingsProvider>(

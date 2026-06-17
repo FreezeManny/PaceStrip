@@ -8,13 +8,16 @@ class SettingsProvider extends ChangeNotifier {
   final SettingsService _service;
   ZoneConfig _config = ZoneConfig.defaults();
   ThemeMode _themeMode = ThemeMode.dark;
+  bool _simulateSensors = false;
 
   ZoneConfig get config => _config;
   ThemeMode get themeMode => _themeMode;
+  bool get simulateSensors => _simulateSensors;
 
   Future<void> initialize() async {
     _config = await _service.load();
     _themeMode = await _service.loadThemeMode();
+    _simulateSensors = await _service.loadSimulateSensors();
     notifyListeners();
   }
 
@@ -28,5 +31,11 @@ class SettingsProvider extends ChangeNotifier {
     _themeMode = mode;
     notifyListeners();
     await _service.saveThemeMode(mode);
+  }
+
+  Future<void> setSimulateSensors(bool value) async {
+    _simulateSensors = value;
+    notifyListeners();
+    await _service.saveSimulateSensors(value);
   }
 }
