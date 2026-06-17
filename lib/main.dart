@@ -13,11 +13,13 @@ void main() async {
   final settingsService = SettingsService();
   final initialConfig = await settingsService.load();
   final initialThemeMode = await settingsService.loadThemeMode();
+  final initialSimulate = await settingsService.loadSimulateSensors();
 
   runApp(CycleApp(
     settingsService: settingsService,
     initialConfig: initialConfig,
     initialThemeMode: initialThemeMode,
+    initialSimulate: initialSimulate,
   ));
 }
 
@@ -27,11 +29,13 @@ class CycleApp extends StatelessWidget {
     required this.settingsService,
     required this.initialConfig,
     this.initialThemeMode = ThemeMode.dark,
+    this.initialSimulate = false,
   });
 
   final SettingsService settingsService;
   final ZoneConfig initialConfig;
   final ThemeMode initialThemeMode;
+  final bool initialSimulate;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +44,8 @@ class CycleApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => SettingsProvider(settingsService)
             ..updateConfig(initialConfig)
-            ..setThemeMode(initialThemeMode),
+            ..setThemeMode(initialThemeMode)
+            ..setSimulateSensors(initialSimulate),
         ),
         ChangeNotifierProvider(
           create: (_) {
@@ -58,8 +63,9 @@ class CycleApp extends StatelessWidget {
             ctx.read<SettingsProvider>().config,
             ble: ctx.read<BleSensorManager>(),
           ),
-          update: (_, settings, stats) =>
-              stats!..updateSettings(settings.config),
+          update: (_, settings, stats) => stats!
+            ..updateSettings(settings.config)
+            ..setSimulate(settings.simulateSensors),
         ),
       ],
       child: Consumer<SettingsProvider>(

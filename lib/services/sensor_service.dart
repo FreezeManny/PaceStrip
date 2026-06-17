@@ -23,11 +23,12 @@ class SimulatedSensorSource {
   }
 }
 
-/// Combines live BLE sensor data with the simulated fallback into a single
-/// [CyclingStats] stream. Emits once per second so the rolling 60-sample
+/// Combines live BLE sensor data with an optional simulated fallback into a
+/// single [CyclingStats] stream. Emits once per second so the rolling 60-sample
 /// history buffers in `StatsProvider` stay evenly spaced, regardless of how
 /// often the individual BLE sensors notify. Each metric independently uses its
-/// connected sensor or falls back to simulation.
+/// connected sensor; when no sensor is connected it emits `null` (rendered as
+/// `---`) unless [simulateWhenIdle] is enabled via the debug setting.
 class SensorHub {
   SensorHub(this._ble)
       : _controller = StreamController<CyclingStats>.broadcast();
@@ -35,6 +36,11 @@ class SensorHub {
   final BleSensorManager _ble;
   final StreamController<CyclingStats> _controller;
   final SimulatedSensorSource _sim = SimulatedSensorSource();
+
+  /// When true, metrics without a connected sensor are filled with simulated
+  /// values instead of `null`. Driven by the "Simulate sensor data" debug
+  /// toggle in settings.
+  bool simulateWhenIdle = false;
 
   Timer? _timer;
   ZoneConfig _config = ZoneConfig.defaults();
@@ -59,26 +65,26 @@ class SensorHub {
     _controller.add(CyclingStats(
       heartRate: hr,
       cadence: cad,
-      zone: _config.zoneFor(hr),
-      cadenceZone: _config.cadenceZoneFor(cad),
+      zone: hr == null ? null : _config.zoneFor(hr),
+      cadenceZone: cad == null ? null : _config.cadenceZoneFor(cad),
       timestamp: DateTime.now(),
     ));
   }
 
-  int _readHeartRate() {
+  int? _readHeartRate() {
     final conn = _ble.connection(SensorRole.heartRate);
-    if (conn.isConnected) return conn.latestValue ?? 0;
-    return _sim.nextHr();
+    if (conn.isConnected) return conn.latestValue;
+    return simulateWhenIdle ? _sim.nextHr() : null;
   }
 
-  int _readCadence() {
+  int? _readCadence() {
     final conn = _ble.connection(SensorRole.cadence);
-    if (!conn.isConnected) return _sim.nextCadence();
+    if (!conn.isConnected) return simulateWhenIdle ? _sim.nextCadence() : null;
     final at = conn.lastValueAt;
     if (at == null || DateTime.now().difference(at) > _cadenceTimeout) {
       return 0; // coasting / no recent crank event
     }
-    return conn.latestValue ?? 0;
+    return conn.latestValue;
   }
 
   void dispose() {

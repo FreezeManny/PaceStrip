@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/settings_provider.dart';
+import 'debug_settings_panel.dart';
 import 'sensor_section.dart';
 import 'zone_slider.dart';
 import 'cadence_slider.dart';
 
 class SettingsPanel extends StatelessWidget {
   const SettingsPanel({super.key});
+
+  void _openDebugSettings(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
+      ),
+      builder: (_) => const DebugSettingsPanel(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +72,15 @@ class SettingsPanel extends StatelessWidget {
             CadenceSlider(
               config: config,
               onChanged: provider.updateConfig,
+            ),
+            const SizedBox(height: 28),
+            _sectionLabel(context, 'ADVANCED'),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.bug_report_outlined),
+              title: const Text('Debug Settings'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _openDebugSettings(context),
             ),
           ],
         ),

@@ -27,10 +27,17 @@ class StatsProvider extends ChangeNotifier {
     _sensor.updateConfig(config);
   }
 
+  /// Toggles the debug simulator that fills metrics lacking a connected sensor.
+  void setSimulate(bool value) {
+    _sensor.simulateWhenIdle = value;
+  }
+
   void _onData(CyclingStats stats) {
     latest = stats;
-    hrHistory.add(stats.heartRate.toDouble());
-    cadHistory.add(stats.cadence.toDouble());
+    // Only record real readings; gaps (no sensor, simulator off) leave the
+    // history untouched rather than charting a misleading value.
+    if (stats.heartRate != null) hrHistory.add(stats.heartRate!.toDouble());
+    if (stats.cadence != null) cadHistory.add(stats.cadence!.toDouble());
     notifyListeners();
   }
 
