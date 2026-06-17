@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.1.0...pacestrip-v0.2.0) (2026-06-17)
+
+
+### Features
+
+* enable APK release pipeline ([cc090fb](https://github.com/FreezeManny/PaceStrip/commit/cc090fbf1c0fa9f817ffd3dc4a9f914429deb907))
+
 ## [0.1.0](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.0.1...pacestrip-v0.1.0) (2026-06-17)
 
 
