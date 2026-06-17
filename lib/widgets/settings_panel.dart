@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/app_theme.dart';
 import '../providers/settings_provider.dart';
 import 'debug_settings_panel.dart';
 import 'sensor_section.dart';
@@ -52,12 +53,21 @@ class SettingsPanel extends StatelessWidget {
             const SensorSection(),
             const SizedBox(height: 16),
             _sectionLabel(context, 'THEME'),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Dark mode'),
-              value: provider.themeMode == ThemeMode.dark,
-              onChanged: (dark) => provider
-                  .setThemeMode(dark ? ThemeMode.dark : ThemeMode.light),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<AppTheme>(
+                showSelectedIcon: false,
+                segments: [
+                  for (final theme in AppTheme.values)
+                    ButtonSegment(
+                      value: theme,
+                      label: Text(theme.label),
+                    ),
+                ],
+                selected: {provider.appTheme},
+                onSelectionChanged: (s) => provider.setAppTheme(s.first),
+              ),
             ),
             const SizedBox(height: 16),
             _sectionLabel(context, 'HEART RATE ZONES'),
