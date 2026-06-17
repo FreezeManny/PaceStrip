@@ -13,11 +13,26 @@ name: Release Please
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
       - uses: googleapis/release-please-action@v5
+        id: release
         with:
           # A PAT (repo + workflow scopes) stored as the ACTIONS_TOKEN secret lets
           # the release PR / tag trigger other workflows (e.g. a publish job).
           # The built-in secrets.GITHUB_TOKEN also works, but tags it creates
           # will NOT trigger downstream workflows. Swap if you don't need that.
           token: ${{ secrets.ACTIONS_TOKEN }}
+
+  # When release-please cuts a release, build the APK and attach it to the
+  # GitHub Release as an asset (consumable by Obtainium and friends).
+  build:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build.yml
+    with:
+      release_tag: ${{ needs.release-please.outputs.tag_name }}

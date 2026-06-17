@@ -1,14 +1,25 @@
 name: Build
 
-# No automatic trigger: release-please will call this workflow once integrated.
+# Triggered manually, or called by release-please.yml when a release is cut.
+# When `release_tag` is supplied, the built APK is attached to that GitHub
+# Release as an asset so app stores like Obtainium can pick it up.
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      release_tag:
+        description: 'Tag of the release to attach the APK to (empty = artifact only).'
+        type: string
+        required: false
+        default: ''
 
 jobs:
   build-android:
     name: Build for Android
     runs-on: ubuntu-latest
+    permissions:
+      # Needed for `gh release upload` to attach the APK to the release.
+      contents: write
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-java@v5
@@ -27,3 +38,11 @@ jobs:
         with:
           name: pacestrip-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+      - name: Attach APK to release
+        if: ${{ inputs.release_tag != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          apk="pacestrip-${{ inputs.release_tag }}.apk"
+          cp build/app/outputs/flutter-apk/app-release.apk "$apk"
+          gh release upload "${{ inputs.release_tag }}" "$apk" --clobber
