@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.2](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.2.1...pacestrip-v0.2.2) (2026-06-21)
+
+
+### Bug Fixes
+
+* rebuild release with updated tests ([ec943eb](https://github.com/FreezeManny/PaceStrip/commit/ec943eb4351a8a68b2e0353f81b0baf3f0b57d96))
+* rebuild release with updated tests ([ebc6cd2](https://github.com/FreezeManny/PaceStrip/commit/ebc6cd272b09b3a2b25f7ef3edb512478744cac0))
+
 ## [0.2.1](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.2.0...pacestrip-v0.2.1) (2026-06-21)
 
 
