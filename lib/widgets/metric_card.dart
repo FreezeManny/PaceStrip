@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../models/app_theme.dart';
+
 /// Value card: one chrome line (label left, unit right), a number that
 /// fills the remaining height, and a zone segment bar along the bottom.
 class MetricCard extends StatelessWidget {
@@ -23,6 +25,7 @@ class MetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final card = cardStyle(context);
     final labelStyle = TextStyle(
       color: scheme.onSurfaceVariant,
       fontSize: 11,
@@ -32,8 +35,8 @@ class MetricCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.all(4),
-      color: scheme.surfaceContainerHigh,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: card.color,
+      shape: card.shape,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Column(

@@ -51,6 +51,10 @@ class BleSensorManager extends ChangeNotifier {
 
   SensorConnection connection(SensorRole role) => _conns[role]!;
 
+  /// True once at least one sensor of any role is connected. Drives the
+  /// "no sensor connected" hint on the dashboard.
+  bool get anyConnected => _conns.values.any((c) => c.isConnected);
+
   /// Live scan results from `flutter_blue_plus`.
   Stream<List<ScanResult>> get scanResults => FlutterBluePlus.onScanResults;
   Stream<bool> get isScanning => FlutterBluePlus.isScanning;
