@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.2.0...pacestrip-v0.2.1) (2026-06-21)
+
+
+### Bug Fixes
+
+* enhance themes and dashboard sensor connectivity indicators ([074097a](https://github.com/FreezeManny/PaceStrip/commit/074097a444860544203efc853a6a2a4c9a36442f))
+* enhance themes and dashboard sensor connectivity indicators ([17fa381](https://github.com/FreezeManny/PaceStrip/commit/17fa381602938f0f5f7fc0cef160337b7176e56a))
+
 ## [0.2.0](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.1.0...pacestrip-v0.2.0) (2026-06-17)
 
 
