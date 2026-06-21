@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/zone_config.dart';
 import '../providers/stats_provider.dart';
+import '../services/ble/ble_sensor_manager.dart';
 import 'graph_card.dart';
 import 'metric_card.dart';
 import 'settings_panel.dart';
@@ -28,6 +29,7 @@ class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stats = context.watch<StatsProvider>();
+    final sensorsConnected = context.watch<BleSensorManager>().anyConnected;
     final latest = stats.latest;
     // 0 = no value: ZoneSegmentBar lights nothing and the graph falls back to
     // a neutral color, so missing data reads as blank rather than zone 1.
@@ -42,6 +44,7 @@ class Dashboard extends StatelessWidget {
           padding: const EdgeInsets.all(4),
           child: Column(
             children: [
+              if (!sensorsConnected) const _NoSensorBanner(),
               Expanded(
                 flex: 3,
                 child: Row(
@@ -114,6 +117,43 @@ class Dashboard extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// Short hint shown on the dashboard while no sensor is connected, so blank
+/// "---" metrics read as "nothing paired yet" rather than a malfunction.
+class _NoSensorBanner extends StatelessWidget {
+  const _NoSensorBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: scheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.bluetooth_disabled,
+                size: 18, color: scheme.onSecondaryContainer),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'No sensor connected — open Settings to pair one.',
+                style: TextStyle(
+                  color: scheme.onSecondaryContainer,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

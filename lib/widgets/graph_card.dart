@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/app_theme.dart';
 import 'sparkline_painter.dart';
 
 /// Graph card: small label on top, sparkline of the metric history below,
@@ -22,11 +23,12 @@ class GraphCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final card = cardStyle(context);
 
     return Card(
       margin: const EdgeInsets.all(4),
-      color: scheme.surfaceContainerHigh,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: card.color,
+      shape: card.shape,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Column(
