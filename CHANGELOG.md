@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.2.2...pacestrip-v0.3.0) (2026-06-22)
+
+
+### Features
+
+* improved heartrate zone setting ([f39a1d5](https://github.com/FreezeManny/PaceStrip/commit/f39a1d5a0c47ed2a67732ece7bdc4f36b5267bff))
+* improved heartrate zone setting ([4a65779](https://github.com/FreezeManny/PaceStrip/commit/4a65779c873d597694d9fe4571741fe09089f021))
+
 ## [0.2.2](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.2.1...pacestrip-v0.2.2) (2026-06-21)
 
 
