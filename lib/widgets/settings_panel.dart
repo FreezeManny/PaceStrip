@@ -3,12 +3,24 @@ import 'package:provider/provider.dart';
 import '../models/app_theme.dart';
 import '../providers/settings_provider.dart';
 import 'debug_settings_panel.dart';
+import 'hr_calculator_dialog.dart';
 import 'sensor_section.dart';
 import 'zone_slider.dart';
 import 'cadence_slider.dart';
 
 class SettingsPanel extends StatelessWidget {
   const SettingsPanel({super.key});
+
+  Future<void> _openHrCalculator(BuildContext context) async {
+    final provider = context.read<SettingsProvider>();
+    final maxHr = await showDialog<int>(
+      context: context,
+      builder: (_) => const HrCalculatorDialog(),
+    );
+    if (maxHr != null) {
+      provider.updateConfig(provider.config.withCalculatedZones(maxHr));
+    }
+  }
 
   void _openDebugSettings(BuildContext context) {
     showModalBottomSheet(
@@ -70,7 +82,21 @@ class SettingsPanel extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _sectionLabel(context, 'HEART RATE ZONES'),
+            Row(
+              children: [
+                _sectionLabel(context, 'HEART RATE ZONES'),
+                const Spacer(),
+                TextButton.icon(
+                  onPressed: () => _openHrCalculator(context),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  icon: const Icon(Icons.calculate_outlined, size: 18),
+                  label: const Text('Calculate'),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             ZoneSlider(
               config: config,
