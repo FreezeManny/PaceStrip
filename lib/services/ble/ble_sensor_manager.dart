@@ -43,6 +43,15 @@ class BleSensorManager extends ChangeNotifier {
       _connSubs = {};
   final Map<SensorRole, StreamSubscription<List<int>>?> _valueSubs = {};
 
+  // Roles the user wants kept connected, plus their pending reconnect timers.
+  // Android's `autoConnect` is too slow/unreliable in practice, so we drive
+  // reconnection ourselves with a retrying direct connect (the same fast path
+  // a manual tap uses).
+  final Set<SensorRole> _wantConnected = {};
+  final Map<SensorRole, Timer?> _reconnectTimers = {};
+
+  static const _reconnectDelay = Duration(seconds: 2);
+
   // Cadence is computed from successive crank samples, so it needs state that
   // survives across notifications. Reset whenever the cadence device changes.
   final CrankCadenceDecoder _crankDecoder = CrankCadenceDecoder();
@@ -105,6 +114,7 @@ class BleSensorManager extends ChangeNotifier {
   /// remembers it for future auto-reconnect.
   Future<void> connect(SensorRole role, BluetoothDevice device) async {
     await stopScan();
+    _wantConnected.add(role);
     await _assign(role, device);
     if (role == SensorRole.cadence) _crankDecoder.reset();
     await _settings.saveSensorDevice(
@@ -112,33 +122,55 @@ class BleSensorManager extends ChangeNotifier {
       device.remoteId.str,
       _displayName(device),
     );
-    try {
-      await device.connect(license: License.nonprofit);
-    } catch (_) {
-      // The connectionState listener reflects failure; nothing more to do here.
-    }
+    await _connect(role);
   }
 
-  /// Reconnects a previously remembered device on app start. Uses `autoConnect`
-  /// so the OS links up whenever the sensor next powers on / comes in range.
+  /// Reconnects a previously remembered device on app start.
   Future<void> reconnectRemembered(SensorRole role) async {
     final saved = await _settings.loadSensorDevice(role.prefsKey);
     if (saved == null) return;
     final device = BluetoothDevice.fromId(saved.id);
     final conn = _conns[role]!;
-    conn.deviceId = saved.id;
-    conn.deviceName = saved.name;
+    conn
+      ..deviceId = saved.id
+      ..deviceName = saved.name
+      ..status = SensorConnectionStatus.connecting;
     _devices[role] = device;
+    _wantConnected.add(role);
     if (role == SensorRole.cadence) _crankDecoder.reset();
     _listenConnection(role, device);
     _safeNotify();
+    await _connect(role);
+  }
+
+  /// Attempts a direct connection to the device currently assigned to [role].
+  /// On failure (e.g. the sensor is out of range) schedules a retry; success is
+  /// reflected through the [_onConnectionState] listener.
+  Future<void> _connect(SensorRole role) async {
+    final device = _devices[role];
+    if (device == null) return;
     try {
-      await device.connect(
-        license: License.nonprofit,
-        autoConnect: true,
-        mtu: null,
-      );
-    } catch (_) {}
+      await device.connect(license: License.nonprofit);
+    } catch (_) {
+      _scheduleReconnect(role);
+    }
+  }
+
+  /// Queues another direct-connect attempt for [role] after [_reconnectDelay],
+  /// as long as the user still wants it connected. A retrying direct connect is
+  /// far faster and more reliable than Android's background `autoConnect`.
+  void _scheduleReconnect(SensorRole role) {
+    if (_disposed || !_wantConnected.contains(role)) return;
+    _reconnectTimers[role]?.cancel();
+    _reconnectTimers[role] = Timer(_reconnectDelay, () async {
+      _reconnectTimers[role] = null;
+      if (_disposed || !_wantConnected.contains(role)) return;
+      final conn = _conns[role]!;
+      if (conn.isConnected) return;
+      conn.status = SensorConnectionStatus.connecting;
+      _safeNotify();
+      await _connect(role);
+    });
   }
 
   Future<void> _assign(SensorRole role, BluetoothDevice device) async {
@@ -183,11 +215,11 @@ class BleSensorManager extends ChangeNotifier {
       await _valueSubs[role]?.cancel();
       _valueSubs[role] = null;
       _safeNotify();
-      // Still our device? Ask the OS to reconnect whenever it returns.
-      if (!_disposed && _devices[role]?.remoteId == device.remoteId) {
-        device
-            .connect(license: License.nonprofit, autoConnect: true, mtu: null)
-            .catchError((_) {});
+      // Still our device and still wanted? Retry the fast direct connect.
+      if (!_disposed &&
+          _wantConnected.contains(role) &&
+          _devices[role]?.remoteId == device.remoteId) {
+        _scheduleReconnect(role);
       }
     }
   }
@@ -250,6 +282,7 @@ class BleSensorManager extends ChangeNotifier {
 
   /// Disconnects and forgets the device for [role].
   Future<void> forget(SensorRole role) async {
+    _wantConnected.remove(role);
     await _teardown(role, disconnect: true);
     final conn = _conns[role]!;
     conn
@@ -263,6 +296,8 @@ class BleSensorManager extends ChangeNotifier {
   }
 
   Future<void> _teardown(SensorRole role, {bool disconnect = false}) async {
+    _reconnectTimers[role]?.cancel();
+    _reconnectTimers[role] = null;
     await _connSubs[role]?.cancel();
     _connSubs[role] = null;
     await _valueSubs[role]?.cancel();
@@ -282,6 +317,9 @@ class BleSensorManager extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    for (final timer in _reconnectTimers.values) {
+      timer?.cancel();
+    }
     for (final sub in _connSubs.values) {
       sub?.cancel();
     }

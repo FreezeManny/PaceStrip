@@ -27,14 +27,19 @@ class _ZoneSliderState extends State<ZoneSlider> {
   int? _activeHandle;
 
   bool get _isPercent => widget.config.mode == ZoneMode.maxHrPercent;
+
+  // Track range. The track starts above 0 so the usable zone range gets the
+  // full width; anything below the first handle is still Z1.
+  int get _rangeMin => _isPercent ? 50 : 80;
   int get _rangeMax => _isPercent ? 100 : 220;
 
   List<int> get _boundaries => _isPercent
       ? widget.config.percentBoundaries
       : widget.config.bpmBoundaries;
 
-  double _toFrac(int v) => v / _rangeMax;
-  int _fromFrac(double f) => (f * _rangeMax).round();
+  double _toFrac(int v) =>
+      ((v - _rangeMin) / (_rangeMax - _rangeMin)).clamp(0.0, 1.0);
+  int _fromFrac(double f) => (_rangeMin + f * (_rangeMax - _rangeMin)).round();
 
   List<double> get _fractions =>
       [1, 2, 3, 4].map((i) => _toFrac(_boundaries[i])).toList();
@@ -69,7 +74,7 @@ class _ZoneSliderState extends State<ZoneSlider> {
     final raw = _fromFrac(frac);
     final bounds = List<int>.from(_boundaries);
     final gap = _isPercent ? 2 : 5;
-    final lo = h == 0 ? gap : bounds[h] + gap;
+    final lo = h == 0 ? _rangeMin : bounds[h] + gap;
     final hi = h == 3 ? _rangeMax - gap : bounds[h + 2] - gap;
 
     bounds[h + 1] = raw.clamp(lo, hi);

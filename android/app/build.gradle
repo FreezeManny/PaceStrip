@@ -22,6 +22,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["appLabel"] = "PaceStrip"
     }
 
     buildTypes {
@@ -29,6 +30,13 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
+        }
+        debug {
+            // Distinct id + label so the dev build installs alongside the
+            // production app instead of colliding with it.
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            manifestPlaceholders["appLabel"] = "PaceStrip Dev"
         }
     }
 }

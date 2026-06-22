@@ -91,6 +91,19 @@ class ZoneConfig {
     return 1;
   }
 
+  /// Estimated maximum heart rate for [age] using the Tanaka formula
+  /// (208 − 0.7 × age), which is more accurate across ages than 220 − age.
+  static int maxHrForAge(int age) => (208 - 0.7 * age).round();
+
+  /// Returns a copy with [maxHr] applied and the bpm zone boundaries
+  /// recalculated from the standard percentage split (the current
+  /// [percentBoundaries]: 60/70/80/90 % of max HR for Z2–Z5).
+  ZoneConfig withCalculatedZones(int maxHr) {
+    final bpm =
+        percentBoundaries.map((p) => (maxHr * p / 100).round()).toList();
+    return copyWith(maxHr: maxHr, bpmBoundaries: bpm);
+  }
+
   ZoneConfig copyWith({
     ZoneMode? mode,
     int? maxHr,

@@ -14,7 +14,7 @@
         android:required="true" />
 
     <application
-        android:label="PaceStrip"
+        android:label="${appLabel}"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

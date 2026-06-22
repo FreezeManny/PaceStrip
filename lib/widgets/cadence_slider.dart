@@ -8,6 +8,7 @@ const _kTrackY = _kHandleR;
 const _kLabelGap = 5.0;
 const _kLabelH = 14.0;
 const _kTotalH = _kTrackY + _kHandleR + _kLabelGap + _kLabelH + 4;
+const _kMinRpm = 40;
 const _kMaxRpm = 150;
 
 class CadenceSlider extends StatefulWidget {
@@ -28,8 +29,9 @@ class _CadenceSliderState extends State<CadenceSlider> {
   int? _activeHandle;
 
   List<int> get _boundaries => widget.config.cadenceBoundaries;
-  double _toFrac(int v) => v / _kMaxRpm;
-  int _fromFrac(double f) => (f * _kMaxRpm).round();
+  double _toFrac(int v) =>
+      ((v - _kMinRpm) / (_kMaxRpm - _kMinRpm)).clamp(0.0, 1.0);
+  int _fromFrac(double f) => (_kMinRpm + f * (_kMaxRpm - _kMinRpm)).round();
   List<double> get _fractions =>
       [1, 2].map((i) => _toFrac(_boundaries[i])).toList();
 
@@ -57,7 +59,7 @@ class _CadenceSliderState extends State<CadenceSlider> {
     final raw = _fromFrac(frac);
     final bounds = List<int>.from(_boundaries);
     const gap = 5;
-    final lo = h == 0 ? gap : bounds[h] + gap;
+    final lo = h == 0 ? _kMinRpm : bounds[h] + gap;
     final hi = h == 1 ? _kMaxRpm - gap : bounds[h + 2] - gap;
     bounds[h + 1] = raw.clamp(lo, hi);
     widget.onChanged(widget.config.copyWith(cadenceBoundaries: bounds));
