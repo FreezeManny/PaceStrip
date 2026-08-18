@@ -16,6 +16,22 @@ const cadenceZoneColors = {
   3: Color(0xFFEF5350),
 };
 
+/// Colors each reading by the zone it fell into, so a graph can show every
+/// zone ridden through instead of only the current one (the "colorful graphs"
+/// option). [zoneOf] is the classifier for the metric (`ZoneConfig.zoneFor` or
+/// `cadenceZoneFor`) and [palette] its zone colors; the result is parallel to
+/// [values]. Zones are resolved against the live config, so editing boundaries
+/// recolors the history too.
+List<Color> zoneColorsForValues(
+  List<double> values,
+  int Function(int) zoneOf,
+  Map<int, Color> palette,
+) =>
+    [
+      for (final value in values)
+        palette[zoneOf(value.round())] ?? Colors.white,
+    ];
+
 class ZoneBand {
   const ZoneBand({
     required this.zone,

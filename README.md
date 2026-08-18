@@ -13,12 +13,15 @@ the app is squeezed into a thin strip alongside a map, video, or training app.
   - 5 heart-rate zones (Z1–Z5), configurable either as a **% of max HR** or as **manual bpm boundaries**.
   - 3 cadence zones (low / target / high), with configurable rpm boundaries.
 - **Rolling sparkline graphs** showing the last 60 seconds of heart rate and cadence.
+- **Colorful graphs** (optional, in Settings) — each bar is drawn in the color of
+  the zone that reading was in, so a graph shows every zone you rode through
+  instead of only the current one.
 - **Split-screen aware layout** — the dashboard adapts to short panes, hiding
   chrome (like the settings button) when running in a split-screen strip so the
   numbers get all the space.
 - **Light & dark themes** (dark by default, tuned for low-glare on-the-bike viewing).
-- **Persistent settings** — your zone configuration and theme are saved locally
-  via `shared_preferences`.
+- **Persistent settings** — your zone configuration, theme and graph style are
+  saved locally via `shared_preferences`.
 
 ## Bluetooth sensors
 

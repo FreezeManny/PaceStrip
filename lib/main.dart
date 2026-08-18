@@ -15,12 +15,14 @@ void main() async {
   final initialConfig = await settingsService.load();
   final initialTheme = await settingsService.loadAppTheme();
   final initialSimulate = await settingsService.loadSimulateSensors();
+  final initialColorfulGraphs = await settingsService.loadColorfulGraphs();
 
   runApp(CycleApp(
     settingsService: settingsService,
     initialConfig: initialConfig,
     initialTheme: initialTheme,
     initialSimulate: initialSimulate,
+    initialColorfulGraphs: initialColorfulGraphs,
   ));
 }
 
@@ -31,12 +33,14 @@ class CycleApp extends StatelessWidget {
     required this.initialConfig,
     this.initialTheme = AppTheme.dark,
     this.initialSimulate = false,
+    this.initialColorfulGraphs = false,
   });
 
   final SettingsService settingsService;
   final ZoneConfig initialConfig;
   final AppTheme initialTheme;
   final bool initialSimulate;
+  final bool initialColorfulGraphs;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +50,8 @@ class CycleApp extends StatelessWidget {
           create: (_) => SettingsProvider(settingsService)
             ..updateConfig(initialConfig)
             ..setAppTheme(initialTheme)
-            ..setSimulateSensors(initialSimulate),
+            ..setSimulateSensors(initialSimulate)
+            ..setColorfulGraphs(initialColorfulGraphs),
         ),
         ChangeNotifierProvider(
           create: (_) {
