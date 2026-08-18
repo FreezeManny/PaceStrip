@@ -21,7 +21,7 @@ jobs:
       # Needed for `gh release upload` to attach the APK to the release.
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
