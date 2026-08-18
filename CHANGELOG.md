@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.3.0...pacestrip-v0.4.0) (2026-08-18)
+
+
+### Features
+
+* colorfull-graphs ([70c4a4a](https://github.com/FreezeManny/PaceStrip/commit/70c4a4a78030ff59dbc38ecdcad07d059aee396a))
+
 ## [0.3.0](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.2.2...pacestrip-v0.3.0) (2026-06-22)
 
 
