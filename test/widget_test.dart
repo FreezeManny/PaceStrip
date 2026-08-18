@@ -148,4 +148,37 @@ void main() {
       expect(prefs.getString('theme_mode'), 'black');
     });
   });
+
+  group('Colorful graphs', () {
+    testWidgets('off by default: graphs paint in one current-zone color',
+        (tester) async {
+      await _pumpApp(tester, const Size(416, 900));
+
+      final cards = tester.widgetList<GraphCard>(find.byType(GraphCard));
+      expect(cards, isNotEmpty);
+      expect(cards.every((c) => c.barColors == null), isTrue);
+    });
+
+    testWidgets('when on: every reading gets its own zone color, and persists',
+        (tester) async {
+      await _pumpApp(tester, const Size(416, 900));
+
+      final ctx = tester.element(find.byType(Dashboard));
+      final settings = ctx.read<SettingsProvider>();
+      expect(settings.colorfulGraphs, isFalse);
+
+      await settings.setColorfulGraphs(true);
+      await tester.pump();
+
+      final cards = tester.widgetList<GraphCard>(find.byType(GraphCard));
+      expect(cards, isNotEmpty);
+      for (final card in cards) {
+        expect(card.barColors, isNotNull);
+        expect(card.barColors!.length, card.values.length);
+      }
+
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getBool('colorful_graphs'), isTrue);
+    });
+  });
 }

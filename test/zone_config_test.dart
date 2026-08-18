@@ -46,4 +46,46 @@ void main() {
       expect(config.zoneFor(170), 5);
     });
   });
+
+  group('zoneColorsForValues', () {
+    final config = ZoneConfig.defaults(); // bpm bounds [0, 111, 130, 148, 167]
+
+    test('colors each reading by the zone it fell into', () {
+      final colors = zoneColorsForValues(
+        [100, 120, 135, 150, 170],
+        config.zoneFor,
+        zoneColors,
+      );
+      expect(colors, [
+        zoneColors[1],
+        zoneColors[2],
+        zoneColors[3],
+        zoneColors[4],
+        zoneColors[5],
+      ]);
+    });
+
+    test('rounds fractional readings before classifying', () {
+      // 110.6 -> 111, the Z2 boundary; 110.4 -> 110, still Z1.
+      expect(
+        zoneColorsForValues([110.6, 110.4], config.zoneFor, zoneColors),
+        [zoneColors[2], zoneColors[1]],
+      );
+    });
+
+    test('works with the cadence classifier and palette', () {
+      // cadenceBoundaries default: [0, 80, 100]
+      final colors = zoneColorsForValues(
+        [60, 90, 110],
+        config.cadenceZoneFor,
+        cadenceZoneColors,
+      );
+      expect(colors,
+          [cadenceZoneColors[1], cadenceZoneColors[2], cadenceZoneColors[3]]);
+    });
+
+    test('is empty for an empty history', () {
+      expect(zoneColorsForValues([], config.zoneFor, zoneColors), isEmpty);
+    });
+  });
 }

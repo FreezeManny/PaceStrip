@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/zone_config.dart';
+import '../providers/settings_provider.dart';
 import '../providers/stats_provider.dart';
 import '../services/ble/ble_sensor_manager.dart';
 import 'graph_card.dart';
@@ -29,12 +30,16 @@ class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stats = context.watch<StatsProvider>();
+    final settings = context.watch<SettingsProvider>();
     final sensorsConnected = context.watch<BleSensorManager>().anyConnected;
     final latest = stats.latest;
     // 0 = no value: ZoneSegmentBar lights nothing and the graph falls back to
     // a neutral color, so missing data reads as blank rather than zone 1.
     final zone = latest?.zone ?? 0;
     final cadenceZone = latest?.cadenceZone ?? 0;
+    final hrValues = stats.hrHistory.values;
+    final cadValues = stats.cadHistory.values;
+    final colorful = settings.colorfulGraphs;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -77,19 +82,28 @@ class Dashboard extends StatelessWidget {
                     Expanded(
                       child: GraphCard(
                         label: 'HEART RATE',
-                        values: stats.hrHistory.values,
+                        values: hrValues,
                         minVal: 50,
                         maxVal: 185,
                         color: zoneColors[zone] ?? Colors.white,
+                        barColors: colorful
+                            ? zoneColorsForValues(hrValues,
+                                settings.config.zoneFor, zoneColors)
+                            : null,
                       ),
                     ),
                     Expanded(
                       child: GraphCard(
                         label: 'CADENCE',
-                        values: stats.cadHistory.values,
+                        values: cadValues,
                         minVal: 0,
                         maxVal: 120,
                         color: cadenceZoneColors[cadenceZone] ?? Colors.white,
+                        barColors: colorful
+                            ? zoneColorsForValues(cadValues,
+                                settings.config.cadenceZoneFor,
+                                cadenceZoneColors)
+                            : null,
                       ),
                     ),
                   ],

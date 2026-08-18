@@ -3,7 +3,8 @@ import '../models/app_theme.dart';
 import 'sparkline_painter.dart';
 
 /// Graph card: small label on top, sparkline of the metric history below,
-/// colored by the metric's current zone.
+/// colored by the metric's current zone — or, when [barColors] is given, by
+/// the zone each individual reading was in.
 class GraphCard extends StatelessWidget {
   const GraphCard({
     super.key,
@@ -12,6 +13,7 @@ class GraphCard extends StatelessWidget {
     required this.minVal,
     required this.maxVal,
     required this.color,
+    this.barColors,
   });
 
   final String label;
@@ -19,6 +21,9 @@ class GraphCard extends StatelessWidget {
   final double minVal;
   final double maxVal;
   final Color color;
+
+  /// Optional per-reading colors, parallel to [values] (colorful graphs).
+  final List<Color>? barColors;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +55,7 @@ class GraphCard extends StatelessWidget {
                 minVal: minVal,
                 maxVal: maxVal,
                 color: color,
+                barColors: barColors,
               ),
             ),
           ],

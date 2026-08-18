@@ -82,6 +82,18 @@ class SettingsPanel extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
+            _sectionLabel(context, 'GRAPHS'),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Colorful graphs'),
+              subtitle: const Text(
+                'Color each bar by the zone that reading was in, so the graph '
+                'shows every zone you rode through — not just the current one.',
+              ),
+              value: provider.colorfulGraphs,
+              onChanged: provider.setColorfulGraphs,
+            ),
+            const SizedBox(height: 16),
             Row(
               children: [
                 _sectionLabel(context, 'HEART RATE ZONES'),

@@ -10,15 +10,18 @@ class SettingsProvider extends ChangeNotifier {
   ZoneConfig _config = ZoneConfig.defaults();
   AppTheme _appTheme = AppTheme.dark;
   bool _simulateSensors = false;
+  bool _colorfulGraphs = false;
 
   ZoneConfig get config => _config;
   AppTheme get appTheme => _appTheme;
   bool get simulateSensors => _simulateSensors;
+  bool get colorfulGraphs => _colorfulGraphs;
 
   Future<void> initialize() async {
     _config = await _service.load();
     _appTheme = await _service.loadAppTheme();
     _simulateSensors = await _service.loadSimulateSensors();
+    _colorfulGraphs = await _service.loadColorfulGraphs();
     notifyListeners();
   }
 
@@ -38,5 +41,11 @@ class SettingsProvider extends ChangeNotifier {
     _simulateSensors = value;
     notifyListeners();
     await _service.saveSimulateSensors(value);
+  }
+
+  Future<void> setColorfulGraphs(bool value) async {
+    _colorfulGraphs = value;
+    notifyListeners();
+    await _service.saveColorfulGraphs(value);
   }
 }

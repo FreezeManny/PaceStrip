@@ -6,12 +6,18 @@ class SparklinePainter extends CustomPainter {
     required this.minVal,
     required this.maxVal,
     required this.color,
+    this.barColors,
   });
 
   final List<double> values;
   final double minVal;
   final double maxVal;
   final Color color;
+
+  /// Per-bar colors, parallel to [values] — used for the "colorful graphs"
+  /// option so each bar shows the zone that reading was in. When null (or
+  /// shorter than [values]) bars fall back to the single [color].
+  final List<Color>? barColors;
 
   static const _kMinRange = 4.0;
 
@@ -34,6 +40,7 @@ class SparklinePainter extends CustomPainter {
     final barW = (size.width - gap * (n - 1)) / n;
 
     final paint = Paint()..style = PaintingStyle.fill;
+    final colors = barColors;
 
     for (var i = 0; i < n; i++) {
       final normalized = ((values[i] - lo) / range).clamp(0.0, 1.0);
@@ -43,14 +50,22 @@ class SparklinePainter extends CustomPainter {
         Rect.fromLTWH(x, size.height - barH, barW, barH),
         const Radius.circular(2),
       );
-      paint.color = color.withAlpha((80 + (normalized * 175).round()));
+      final barColor =
+          (colors != null && i < colors.length) ? colors[i] : color;
+      // Bars fade with height for depth. With per-bar zone colors the ramp
+      // starts much higher, so a low bar's hue still reads as its zone.
+      final floor = colors == null ? 80 : 190;
+      paint.color =
+          barColor.withAlpha(floor + (normalized * (255 - floor)).round());
       canvas.drawRRect(rect, paint);
     }
   }
 
   @override
   bool shouldRepaint(SparklinePainter oldDelegate) =>
-      oldDelegate.values != values || oldDelegate.color != color;
+      oldDelegate.values != values ||
+      oldDelegate.color != color ||
+      oldDelegate.barColors != barColors;
 }
 
 class SparklineWidget extends StatelessWidget {
@@ -60,12 +75,14 @@ class SparklineWidget extends StatelessWidget {
     required this.minVal,
     required this.maxVal,
     required this.color,
+    this.barColors,
   });
 
   final List<double> values;
   final double minVal;
   final double maxVal;
   final Color color;
+  final List<Color>? barColors;
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +93,7 @@ class SparklineWidget extends StatelessWidget {
           minVal: minVal,
           maxVal: maxVal,
           color: color,
+          barColors: barColors,
         ),
         child: const SizedBox.expand(),
       ),

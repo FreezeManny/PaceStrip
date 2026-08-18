@@ -7,6 +7,7 @@ class SettingsService {
   static const _key = 'zone_config';
   static const _themeKey = 'theme_mode';
   static const _simulateKey = 'debug_simulate_sensors';
+  static const _colorfulGraphsKey = 'colorful_graphs';
 
   Future<ZoneConfig> load() async {
     final prefs = await SharedPreferences.getInstance();
@@ -48,6 +49,18 @@ class SettingsService {
   Future<void> saveSimulateSensors(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_simulateKey, value);
+  }
+
+  /// Whether sparklines color each bar by the zone that reading was in,
+  /// instead of painting the whole graph in the current zone's color.
+  Future<bool> loadColorfulGraphs() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_colorfulGraphsKey) ?? false;
+  }
+
+  Future<void> saveColorfulGraphs(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_colorfulGraphsKey, value);
   }
 
   /// Remembers the BLE sensor chosen for a role, stored as `{id, name}` JSON
