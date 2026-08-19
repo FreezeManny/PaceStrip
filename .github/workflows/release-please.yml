@@ -10,6 +10,12 @@ permissions:
 
 name: Release Please
 
+# Two merges in quick succession would otherwise race to update the same
+# release PR; the newest wins, and an in-flight run is left to finish.
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
 jobs:
   release-please:
     runs-on: ubuntu-latest
