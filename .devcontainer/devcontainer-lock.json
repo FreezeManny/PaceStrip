@@ -16,9 +16,9 @@
       "integrity": "sha256:8311dff976bd153a54a879021353a7e149963e580022b25af49c45cfc5f13bec"
     },
     "ghcr.io/postfinance/devcontainer-features/git-lfs:1": {
-      "version": "1.0.1",
-      "resolved": "ghcr.io/postfinance/devcontainer-features/git-lfs@sha256:1f8953214559db9942b9af492c39f94d068e53f2a8c816ec99401142a507ce7e",
-      "integrity": "sha256:1f8953214559db9942b9af492c39f94d068e53f2a8c816ec99401142a507ce7e"
+      "version": "1.1.0",
+      "resolved": "ghcr.io/postfinance/devcontainer-features/git-lfs@sha256:405eb8c09f66031785fd22f2f4f0683a9033e98a05f4ba78744644cb169ffce5",
+      "integrity": "sha256:405eb8c09f66031785fd22f2f4f0683a9033e98a05f4ba78744644cb169ffce5"
     }
   }
 }
