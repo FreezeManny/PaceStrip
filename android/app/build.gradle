@@ -6,7 +6,12 @@ plugins {
 
 android {
     namespace = "io.github.freezemanny.pacestrip"
-    compileSdk = flutter.compileSdkVersion
+    // Pinned ahead of flutter.compileSdkVersion (still 36 as of Flutter 3.47):
+    // permission_handler_android 13 ships AAR metadata requiring API 37, so the
+    // Flutter default fails :app:checkReleaseAarMetadata. Requires AGP >= 9.3
+    // (settings.gradle) and Gradle >= 9.5 (gradle-wrapper.properties).
+    // Drop the override once flutter.compileSdkVersion reaches 37.
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
