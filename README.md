@@ -100,3 +100,38 @@ State is managed with [`provider`](https://pub.dev/packages/provider):
 `SettingsProvider` holds the user's zone configuration and theme, and
 `StatsProvider` subscribes to the sensor stream and maintains the rolling
 history that feeds the graphs.
+
+## Contributing
+
+Every PR is **squash-merged**, and the squash commit message is the **PR title**. That single
+title is therefore the only string release-please ever reads, and the only one that has to be
+a [Conventional Commit](https://www.conventionalcommits.org/) — the **pr-title** check enforces
+it. Commits *inside* your branch are yours: `wip`, `fixup`, `asdf`, whatever helps you save
+work. None of them reach `main` or the changelog.
+
+Title format:
+
+```
+<type>(<optional scope>): <description>
+```
+
+Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`,
+`chore`, `revert`. Append `!` for a breaking change (e.g. `feat!:`). Because the squash body is
+the **PR description**, that is also where a `BREAKING CHANGE:` footer goes. Examples:
+
+```
+feat: add heart-rate zone alerts
+fix(ble): reconnect after the sensor sleeps
+chore(deps): bump flutter_lints
+```
+
+> Only `feat`, `fix`, and breaking changes bump a version; the rest don't trigger a release.
+> Merging the release PR bumps `pubspec.yaml`, tags `vX.Y.Z`, and builds the release APK as a
+> GitHub release asset — which is what Obtainium picks up.
+>
+> A PR that does two unrelated things collapses into one changelog entry under one type. The fix
+> is to split the PR.
+
+The **test** check runs `flutter analyze`, `flutter test` and a full `flutter build apk
+--release` on every PR: analyze and test never touch the Android toolchain, so building the APK
+is what catches a bad Gradle or AGP bump before release time.

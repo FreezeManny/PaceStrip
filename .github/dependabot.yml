@@ -1,6 +1,18 @@
 # Keeps dependencies up to date.
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 # https://containers.dev/guide/dependabot
+#
+# The `commit-message.prefix` on every ecosystem below is deliberate, not
+# cosmetic: it is what decides whether a bump shows up in the changelog and
+# cuts a release. The rule is "does this change what users install?" —
+#   yes -> `fix`, so release-please opens a release PR with a visible entry
+#   no  -> `chore`, hidden from the changelog and never a release on its own
+# Stated explicitly rather than left to Dependabot's inference from commit
+# history, which now contains `fix(deps)` commits too.
+#
+# `groups:` matters as much: without it Dependabot opens one PR per dependency,
+# which is a Monday review queue of five near-identical PRs. Grouped, each
+# ecosystem gives one PR that either goes green or does not.
 version: 2
 updates:
   # Base image and `features:` in .devcontainer — pinned to floating tags, so
@@ -9,18 +21,20 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    # Nothing here reaches the shipped APK, so it must not cut a release.
     commit-message:
-      prefix: "build"
+      prefix: "chore"
       include: "scope"
 
-  # Workflow actions.
+  # Workflow actions are pinned to floating major tags, so without this they
+  # drift silently and never surface a PR.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: weekly
-    # Explicit prefix so the PR title is Conventional and the PR Title check passes.
+    # CI-only, like the devcontainer: never a release on its own.
     commit-message:
-      prefix: "ci"
+      prefix: "chore"
       include: "scope"
     groups:
       actions:
@@ -31,9 +45,20 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    # Runtime packages are compiled into the APK: bumping one changes the app
+    # users install, so it belongs in the changelog and deserves a release —
+    # `fix` puts it in a visible release-please section. Dev packages
+    # (flutter_lints, flutter_test) change nothing that ships, so they stay
+    # hidden. Without at least one `fix`, a run of `chore(deps)` commits leaves
+    # release-please with nothing user facing to release.
     commit-message:
-      prefix: "build"
+      prefix: "fix"
+      prefix-development: "chore"
       include: "scope"
+    groups:
+      pub-dev:
+        patterns: ["*"]
+        dependency-type: "development"
 
   # The Android host project: Gradle wrapper, AGP, Kotlin and any native deps
   # in android/. `pub` does not see these.
@@ -41,8 +66,12 @@ updates:
     directory: "/android"
     schedule:
       interval: weekly
+    # Build tooling rather than a runtime dependency — it only reaches users
+    # through a release that also carries code changes, so it does not cut one
+    # by itself. test.yml builds the release APK on every PR, which is what
+    # catches a bad AGP or Gradle bump.
     commit-message:
-      prefix: "build"
+      prefix: "chore"
       include: "scope"
     groups:
       gradle:
