@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.4.0...pacestrip-v0.4.1) (2026-09-17)
+
+
+### Bug Fixes
+
+* **deps:** bump permission_handler from 13.0.1 to 13.0.2 ([#35](https://github.com/FreezeManny/PaceStrip/issues/35)) ([99e77f4](https://github.com/FreezeManny/PaceStrip/commit/99e77f496846f56ff52830022204e95f7acda957))
+
 ## [0.4.0](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.3.0...pacestrip-v0.4.0) (2026-08-18)
 
 
