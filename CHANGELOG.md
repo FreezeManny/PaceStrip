@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.1](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.4.0...pacestrip-v0.4.1) (2026-10-09)
+
+
+### Bug Fixes
+
+* **deps:** bump flutter_blue_plus from 2.3.12 to 2.3.13 ([#40](https://github.com/FreezeManny/PaceStrip/issues/40)) ([948eb6e](https://github.com/FreezeManny/PaceStrip/commit/948eb6e7df388773de8a002708ccabf0f4b17545))
+* **deps:** bump flutter_blue_plus from 2.3.13 to 2.3.14 ([#41](https://github.com/FreezeManny/PaceStrip/issues/41)) ([4a20574](https://github.com/FreezeManny/PaceStrip/commit/4a2057415dbbd4b459d154bff26c1c81425bd6d3))
+* **deps:** bump permission_handler from 13.0.1 to 13.0.2 ([#35](https://github.com/FreezeManny/PaceStrip/issues/35)) ([99e77f4](https://github.com/FreezeManny/PaceStrip/commit/99e77f496846f56ff52830022204e95f7acda957))
+
 ## [0.4.0](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.3.0...pacestrip-v0.4.0) (2026-08-18)
 
 
