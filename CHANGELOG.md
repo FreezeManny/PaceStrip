@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.4.1...pacestrip-v0.4.2) (2026-10-16)
+
+
+### Bug Fixes
+
+* **deps:** bump shared_preferences from 2.5.5 to 2.5.6 ([#42](https://github.com/FreezeManny/PaceStrip/issues/42)) ([1b5310c](https://github.com/FreezeManny/PaceStrip/commit/1b5310c5dd4ab8cc1e5d86b24d6a04151dd471ef))
+
 ## [0.4.1](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.4.0...pacestrip-v0.4.1) (2026-10-09)
 
 
