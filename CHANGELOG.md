@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.4.2...pacestrip-v0.4.3) (2026-11-03)
+
+
+### Bug Fixes
+
+* apk sign with keystore ([#47](https://github.com/FreezeManny/PaceStrip/issues/47)) ([5184350](https://github.com/FreezeManny/PaceStrip/commit/518435003f236512b81685919d952abd92ada949))
+
 ## [0.4.2](https://github.com/FreezeManny/PaceStrip/compare/pacestrip-v0.4.1...pacestrip-v0.4.2) (2026-10-16)
 
 
