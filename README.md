@@ -135,3 +135,7 @@ chore(deps): bump flutter_lints
 The **test** check runs `flutter analyze`, `flutter test` and a full `flutter build apk
 --release` on every PR: analyze and test never touch the Android toolchain, so building the APK
 is what catches a bad Gradle or AGP bump before release time.
+
+### Release signing
+
+Release APKs must always be signed with the same key, or Android (and Obtainium) will refuse to update an installed app. CI signs with a keystore stored in these GitHub Actions secrets: `KEYSTORE_BASE64` (`base64 -w0 your.jks`), `KEYSTORE_PASSWORD`, `KEY_ALIAS` and `KEY_PASSWORD`. Without them the build falls back to debug signing. Keep a backup of the keystore and passwords; if they are lost, users have to uninstall and reinstall.
